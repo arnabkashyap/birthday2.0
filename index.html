@@ -103,28 +103,49 @@ canvas{
 position:fixed;
 pointer-events:none;
 }
+
+/* SECRET POPUP */
+#secretPopup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.9);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.popupContent{
+background:linear-gradient(135deg,#ff4e8b,#ff1e6b);
+padding:40px;
+border-radius:20px;
+max-width:350px;
+text-align:center;
+box-shadow:0 0 30px rgba(255,255,255,0.6);
+animation:fadeIn 1.5s ease forwards;
+}
 </style>
 </head>
 <body>
 
-<audio id="music" loop>
+<audio id="music" loop preload="auto">
 <source src="your-music.mp3" type="audio/mpeg">
 </audio>
 
-<!-- INTRO -->
 <section id="intro">
 <h1>Before I say Happy Birthday, Deha…</h1>
 <p>I need you to know something from my heart.</p>
-<button onclick="start()">Open My Heart 💌</button>
+<button id="startBtn">Open My Heart 💌</button>
 </section>
 
-<!-- COUNTDOWN -->
 <section id="countSection" class="hidden">
 <h1>Counting the seconds until my queen’s day 👑</h1>
 <div id="countdown"></div>
 </section>
 
-<!-- MAIN -->
 <section id="main" class="hidden">
 <h1>Happy Birthday, Deha ❤️</h1>
 <p>
@@ -135,17 +156,24 @@ and a year deeper in my heart.
 </p>
 </section>
 
-<!-- SLIDESHOW -->
 <section id="memories" class="hidden">
 <h1>Our Beautiful Memories 📸</h1>
 <div class="slideshow">
-<img src="photo1.jpg" class="active">
-<img src="photo2.jpg">
-<img src="photo3.jpg">
+<img src="img1.jpeg" class="active">
+<img src="img2.jpeg">
+<img src="img3.jpeg">
+<img src="img4.jpeg">
+<img src="img5.jpeg">
+<img src="img6.jpeg">
+<img src="img7.jpeg">
+<img src="img8.jpeg">
+<img src="img9.jpeg">
+<img src="img10.jpeg">
+<img src="img11.jpeg">
+<img src="img12.jpeg">
 </div>
 </section>
 
-<!-- REASONS -->
 <section id="reasons" class="hidden">
 <h1>Why I Love You, Deha 💖</h1>
 <button onclick="show('r1')">Your Smile</button>
@@ -157,33 +185,45 @@ and a year deeper in my heart.
 <p id="r3" class="hidden fade">Your voice is my favorite sound in this entire world.</p>
 </section>
 
-<!-- LETTER -->
 <section id="letter" class="hidden">
 <h1>A Letter To You 💌</h1>
 <p id="typewriter"></p>
 </section>
 
+<div id="secretPopup" class="hidden">
+<div class="popupContent">
+<h1>Deha… ❤️</h1>
+<p>
+No matter where life takes us…<br><br>
+I will always choose you.<br>
+I will always fight for us.<br>
+And I will always love you.<br><br>
+Forever isn’t long enough with you. 💍
+</p>
+<button onclick="closePopup()">Close 💕</button>
+</div>
+</div>
+
 <canvas id="confetti"></canvas>
 
 <script>
-let musicStarted=false;
 
-function start(){
+document.getElementById("startBtn").addEventListener("click", function () {
+
+const music = document.getElementById("music");
+music.volume = 0.7;
+music.play();
+
 document.getElementById("intro").classList.add("hidden");
 document.getElementById("countSection").classList.remove("hidden");
 
-if(!musicStarted){
-document.getElementById("music").play();
-musicStarted=true;
-}
-
 startCountdown();
 createHearts();
-}
+
+});
 
 function startCountdown(){
-
-let countDate = new Date("February 27, 2026 00:00:00").getTime(); // change year if needed
+let countDate = new Date("February 27, 2026 00:00:00").getTime();
 
 let x=setInterval(function(){
 let now=new Date().getTime();
@@ -234,13 +274,12 @@ setInterval(()=>{
 slides[index].classList.remove("active");
 index=(index+1)%slides.length;
 slides[index].classList.add("active");
-},3000);
+},2500);
 }
 
 let text="Deha, on your birthday I just want to say... You are my peace, my happiness, my safe place, and my forever. Every day with you feels like a blessing I never want to lose. I promise to love you more with every heartbeat, to stand by you in every storm, and to choose you again and again. Happy Birthday, my everything. ❤️ – Arnab";
 
 let i=0;
-
 function typeWriter(){
 if(i<text.length){
 document.getElementById("typewriter").innerHTML+=text.charAt(i);
@@ -288,10 +327,22 @@ p.x=Math.random()*canvas.width;
 }
 }
 }
-
 setInterval(draw,20);
 }
-</script>
 
+/* SECRET 5 CLICK SURPRISE */
+let clickCount=0;
+document.addEventListener("click",function(){
+clickCount++;
+if(clickCount===5){
+document.getElementById("secretPopup").classList.remove("hidden");
+}
+});
+function closePopup(){
+document.getElementById("secretPopup").classList.add("hidden");
+clickCount=0;
+}
+
+</script>
 </body>
 </html>
