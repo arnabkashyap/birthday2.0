@@ -8,11 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
 
 <style>
-
-html{
-scroll-behavior:smooth;
-}
-
 body{
 margin:0;
 font-family:'Poppins',sans-serif;
@@ -46,7 +41,7 @@ color:white;
 font-size:1rem;
 cursor:pointer;
 transition:0.3s;
-margin:10px;
+margin:15px;
 }
 
 button:hover{
@@ -55,28 +50,6 @@ transform:scale(1.1);
 }
 
 .hidden{display:none;}
-
-.fade{
-animation:fadeIn 2s ease forwards;
-opacity:0;
-}
-
-@keyframes fadeIn{
-to{opacity:1;}
-}
-
-.heart{
-position:fixed;
-top:-10px;
-animation:fall linear infinite;
-font-size:20px;
-}
-
-@keyframes fall{
-to{transform:translateY(110vh);}
-}
-
-/* SLIDESHOW */
 
 .slideshow{
 position:relative;
@@ -117,20 +90,15 @@ cursor:pointer;
 display:none;
 }
 
-#replayBtn:hover{
-background:#ff1e6b;
+canvas{
+position:fixed;
+pointer-events:none;
 }
 
 #countdown{
 font-size:2rem;
 margin-top:20px;
 }
-
-canvas{
-position:fixed;
-pointer-events:none;
-}
-
 </style>
 </head>
 <body>
@@ -139,17 +107,20 @@ pointer-events:none;
 <source src="your-music.mp3" type="audio/mpeg">
 </audio>
 
+<!-- INTRO -->
 <section id="intro">
 <h1>Before I say Happy Birthday, Deha…</h1>
 <p>I need you to know something from my heart.</p>
 <button id="startBtn">Open My Heart 💌</button>
 </section>
 
+<!-- COUNTDOWN -->
 <section id="countSection" class="hidden">
 <h1>Counting the seconds until my queen’s day 👑</h1>
 <div id="countdown"></div>
 </section>
 
+<!-- MAIN MESSAGE -->
 <section id="main" class="hidden">
 <h1>Happy Birthday, Deha ❤️</h1>
 <p>
@@ -158,8 +129,10 @@ You are a year more beautiful,<br>
 a year more precious,<br>
 and a year deeper in my heart.
 </p>
+<button onclick="goToMemories()">Next 💕</button>
 </section>
 
+<!-- SLIDESHOW -->
 <section id="memories" class="hidden">
 <h1>Our Beautiful Memories 📸</h1>
 <div class="slideshow">
@@ -177,19 +150,19 @@ and a year deeper in my heart.
 <img src="img12.jpeg">
 <button id="replayBtn">Replay 💕</button>
 </div>
+<button onclick="goToReasons()">Next 💕</button>
 </section>
 
+<!-- REASONS -->
 <section id="reasons" class="hidden">
 <h1>Why I Love You, Deha 💖</h1>
-<button onclick="show('r1')">Your Smile</button>
-<button onclick="show('r2')">Your Heart</button>
-<button onclick="show('r3')">Your Voice</button>
-
-<p id="r1" class="hidden fade">Your smile heals my worst days and lights up my darkest nights.</p>
-<p id="r2" class="hidden fade">Your heart is the safest place I have ever known.</p>
-<p id="r3" class="hidden fade">Your voice is my favorite sound in this entire world.</p>
+<p>Your smile heals my worst days.</p>
+<p>Your heart is the safest place I know.</p>
+<p>Your voice is my favorite sound.</p>
+<button onclick="goToLetter()">Final Message 💌</button>
 </section>
 
+<!-- LETTER -->
 <section id="letter" class="hidden">
 <h1>A Letter To You 💌</h1>
 <p id="typewriter"></p>
@@ -209,7 +182,6 @@ document.getElementById("intro").classList.add("hidden");
 document.getElementById("countSection").classList.remove("hidden");
 
 startCountdown();
-createHearts();
 });
 
 function startCountdown(){
@@ -223,45 +195,38 @@ let distance = countDate - now;
 
 if(distance <= 0){
 clearInterval(x);
-
 document.getElementById("countSection").classList.add("hidden");
 document.getElementById("main").classList.remove("hidden");
-document.getElementById("memories").classList.remove("hidden");
-document.getElementById("reasons").classList.remove("hidden");
-document.getElementById("letter").classList.remove("hidden");
-
-startSlideshow();
-typeWriter();
-confettiEffect();
-
-/* AUTO SCROLL */
-
-setTimeout(()=>{document.getElementById("main").scrollIntoView({behavior:"smooth"});},500);
-setTimeout(()=>{document.getElementById("memories").scrollIntoView({behavior:"smooth"});},4000);
-setTimeout(()=>{document.getElementById("reasons").scrollIntoView({behavior:"smooth"});},9000);
-setTimeout(()=>{document.getElementById("letter").scrollIntoView({behavior:"smooth"});},14000);
-
 return;
 }
+
+let seconds=Math.floor((distance%(1000*60))/1000);
+document.getElementById("countdown").innerHTML = seconds + "s ";
 
 },1000);
 }
 
-function show(id){
-document.getElementById(id).classList.toggle("hidden");
+/* STEP FUNCTIONS */
+
+function goToMemories(){
+document.getElementById("main").classList.add("hidden");
+document.getElementById("memories").classList.remove("hidden");
+startSlideshow();
 }
 
-function createHearts(){
-setInterval(()=>{
-let heart=document.createElement("div");
-heart.classList.add("heart");
-heart.innerHTML="❤️";
-heart.style.left=Math.random()*100+"vw";
-heart.style.animationDuration=Math.random()*3+2+"s";
-document.body.appendChild(heart);
-setTimeout(()=>heart.remove(),5000);
-},300);
+function goToReasons(){
+document.getElementById("memories").classList.add("hidden");
+document.getElementById("reasons").classList.remove("hidden");
 }
+
+function goToLetter(){
+document.getElementById("reasons").classList.add("hidden");
+document.getElementById("letter").classList.remove("hidden");
+typeWriter();
+confettiEffect();
+}
+
+/* SLIDESHOW */
 
 function startSlideshow(){
 
@@ -293,8 +258,9 @@ startSlideshow();
 };
 }
 
-let text="Deha, on your birthday I just want to say... You are my peace, my happiness, my safe place, and my forever. Every day with you feels like a blessing I never want to lose. I promise to love you more with every heartbeat, to stand by you in every storm, and to choose you again and again. Happy Birthday, my everything. ❤️ – Arnab";
+/* TYPEWRITER */
 
+let text="Deha, you are my peace, my happiness, my forever. I promise to love you more every single day. Happy Birthday my everything. ❤️ – Arnab";
 let i=0;
 
 function typeWriter(){
@@ -305,6 +271,8 @@ setTimeout(typeWriter,40);
 }
 }
 
+/* CONFETTI */
+
 function confettiEffect(){
 const canvas=document.getElementById("confetti");
 const ctx=canvas.getContext("2d");
@@ -312,32 +280,22 @@ canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
 let pieces=[];
-for(let i=0;i<150;i++){
+for(let i=0;i<120;i++){
 pieces.push({
 x:Math.random()*canvas.width,
 y:Math.random()*canvas.height,
-r:Math.random()*6+2,
-d:Math.random()*canvas.height
+r:Math.random()*6+2
 });
 }
 
 function draw(){
 ctx.clearRect(0,0,canvas.width,canvas.height);
 ctx.fillStyle="white";
+for(let p of pieces){
 ctx.beginPath();
-for(let i=0;i<pieces.length;i++){
-let p=pieces[i];
-ctx.moveTo(p.x,p.y);
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2,true);
-}
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
 ctx.fill();
-update();
-}
-
-function update(){
-for(let i=0;i<pieces.length;i++){
-let p=pieces[i];
-p.y+=Math.cos(p.d)+1;
+p.y+=2;
 if(p.y>canvas.height){
 p.y=0;
 p.x=Math.random()*canvas.width;
@@ -349,6 +307,5 @@ setInterval(draw,20);
 }
 
 </script>
-
 </body>
 </html>
