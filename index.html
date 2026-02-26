@@ -189,12 +189,18 @@
     <canvas id="confetti"></canvas>
 
     <script>
+        console.log("Birthday Site Script Loaded ✅");
 
         document.getElementById("startBtn").addEventListener("click", function () {
-
+            console.log("Start Button Clicked!");
             const music = document.getElementById("music");
             music.volume = 0.7;
-            music.play();
+
+            try {
+                music.play().catch(e => console.log("Music play blocked or failed:", e));
+            } catch (err) {
+                console.log("Music play error:", err);
+            }
 
             document.getElementById("intro").classList.add("hidden");
             document.getElementById("countSection").classList.remove("hidden");
@@ -256,10 +262,10 @@
             setInterval(() => {
                 slides[index].classList.remove("active");
                 slides[index].classList.add("last");
-                
+
                 let prevIndex = index;
                 index = (index + 1) % slides.length;
-                
+
                 slides[index].classList.remove("last");
                 slides[index].classList.add("active");
 
