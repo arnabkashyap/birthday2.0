@@ -1,1 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday My Love ❤️</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+
+<style>
+body{
+margin:0;
+font-family:'Poppins',sans-serif;
+background:linear-gradient(to bottom,#0f0c29,#302b63,#24243e);
+color:white;
+text-align:center;
+overflow-x:hidden;
+}
+
+section{
+min-height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+padding:40px 20px;
+}
+
+h1{
+font-family:'Dancing Script',cursive;
+font-size:3rem;
+margin-bottom:20px;
+}
+
+button{
+padding:12px 25px;
+border:none;
+border-radius:30px;
+background:#ff4e8b;
+color:white;
+font-size:1rem;
+cursor:pointer;
+transition:0.3s;
+margin:10px;
+}
+
+button:hover{
+background:#ff1e6b;
+transform:scale(1.1);
+}
+
+.hidden{display:none;}
+
+.fade{
+animation:fadeIn 2s ease forwards;
+opacity:0;
+}
+
+@keyframes fadeIn{
+to{opacity:1;}
+}
+
+.heart{
+position:fixed;
+top:-10px;
+animation:fall linear infinite;
+}
+
+@keyframes fall{
+to{transform:translateY(110vh);}
+}
+
+.slideshow{
+width:90%;
+max-width:400px;
+height:500px;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 0 20px rgba(255,255,255,0.3);
+}
+
+.slideshow img{
+width:100%;
+height:100%;
+object-fit:cover;
+position:absolute;
+opacity:0;
+transition:opacity 1s ease;
+}
+
+.slideshow img.active{
+opacity:1;
+}
+
+#countdown{
+font-size:2rem;
+margin-top:20px;
+}
+
+canvas{
+position:fixed;
+pointer-events:none;
+}
+</style>
+</head>
+<body>
+
+<audio id="music" loop>
+<source src="your-music.mp3" type="audio/mpeg">
+</audio>
+
+<!-- INTRO -->
+<section id="intro">
+<h1>Before I say Happy Birthday…</h1>
+<p>I want you to know something very important.</p>
+<button onclick="start()">Open My Heart 💌</button>
+</section>
+
+<!-- COUNTDOWN -->
+<section id="countSection" class="hidden">
+<h1>Your Special Moment Is Coming…</h1>
+<div id="countdown"></div>
+</section>
+
+<!-- MAIN -->
+<section id="main" class="hidden">
+<h1>Happy Birthday, My Love ❤️</h1>
+<p>You are the most beautiful part of my life.</p>
+</section>
+
+<!-- SLIDESHOW -->
+<section id="memories" class="hidden">
+<h1>Our Beautiful Memories 📸</h1>
+<div class="slideshow">
+<img src="photo1.jpg" class="active">
+<img src="photo2.jpg">
+<img src="photo3.jpg">
+</div>
+</section>
+
+<!-- REASONS -->
+<section id="reasons" class="hidden">
+<h1>Why I Love You</h1>
+<button onclick="show('r1')">Your Smile</button>
+<button onclick="show('r2')">Your Heart</button>
+<button onclick="show('r3')">Your Voice</button>
+<p id="r1" class="hidden fade">Your smile heals my worst days.</p>
+<p id="r2" class="hidden fade">Your heart is the safest place I know.</p>
+<p id="r3" class="hidden fade">Your voice is my favorite sound in this world.</p>
+</section>
+
+<!-- LETTER -->
+<section id="letter" class="hidden">
+<h1>A Letter To You 💖</h1>
+<p id="typewriter"></p>
+</section>
+
+<canvas id="confetti"></canvas>
+
+<script>
+let musicStarted=false;
+
+function start(){
+document.getElementById("intro").classList.add("hidden");
+document.getElementById("countSection").classList.remove("hidden");
+
+if(!musicStarted){
+document.getElementById("music").play();
+musicStarted=true;
+}
+
+startCountdown();
+createHearts();
+}
+
+function startCountdown(){
+let countDate=new Date();
+countDate.setSeconds(countDate.getSeconds()+10); // demo 10 sec
+
+let x=setInterval(function(){
+let now=new Date().getTime();
+let distance=countDate-now;
+
+if(distance<0){
+clearInterval(x);
+document.getElementById("countSection").classList.add("hidden");
+document.getElementById("main").classList.remove("hidden");
+document.getElementById("memories").classList.remove("hidden");
+document.getElementById("reasons").classList.remove("hidden");
+document.getElementById("letter").classList.remove("hidden");
+startSlideshow();
+typeWriter();
+confettiEffect();
+}
+},1000);
+}
+
+function show(id){
+document.getElementById(id).classList.toggle("hidden");
+}
+
+function createHearts(){
+setInterval(()=>{
+let heart=document.createElement("div");
+heart.classList.add("heart");
+heart.innerHTML="❤️";
+heart.style.left=Math.random()*100+"vw";
+heart.style.animationDuration=Math.random()*3+2+"s";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),5000);
+},300);
+}
+
+function startSlideshow(){
+let slides=document.querySelectorAll(".slideshow img");
+let index=0;
+setInterval(()=>{
+slides[index].classList.remove("active");
+index=(index+1)%slides.length;
+slides[index].classList.add("active");
+},3000);
+}
+
+let text="On your birthday, I just want to say... You are my peace, my happiness, my safe place, and my forever. I promise to love you more with every heartbeat. Happy Birthday, my everything. ❤️";
+let i=0;
+
+function typeWriter(){
+if(i<text.length){
+document.getElementById("typewriter").innerHTML+=text.charAt(i);
+i++;
+setTimeout(typeWriter,40);
+}
+}
+
+function confettiEffect(){
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let pieces=[];
+for(let i=0;i<150;i++){
+pieces.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*6+2,
+d:Math.random()*canvas.height
+});
+}
+
+function draw(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle="white";
+ctx.beginPath();
+for(let i=0;i<pieces.length;i++){
+let p=pieces[i];
+ctx.moveTo(p.x,p.y);
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2,true);
+}
+ctx.fill();
+update();
+}
+
+function update(){
+for(let i=0;i<pieces.length;i++){
+let p=pieces[i];
+p.y+=Math.cos(p.d)+1;
+if(p.y>canvas.height){
+p.y=0;
+p.x=Math.random()*canvas.width;
+}
+}
+}
+
+setInterval(draw,20);
+}
+</script>
+
+</body>
+</html>
