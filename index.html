@@ -8,6 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
 
 <style>
+
+html{
+scroll-behavior:smooth;
+}
+
 body{
 margin:0;
 font-family:'Poppins',sans-serif;
@@ -72,6 +77,7 @@ to{transform:translateY(110vh);}
 }
 
 /* SLIDESHOW */
+
 .slideshow{
 position:relative;
 width:90%;
@@ -85,7 +91,7 @@ box-shadow:0 0 25px rgba(255,255,255,0.4);
 .slideshow img{
 width:100%;
 height:100%;
-object-fit:contain; /* FIXED: full image visible */
+object-fit:contain;
 background:#000;
 position:absolute;
 opacity:0;
@@ -96,7 +102,6 @@ transition:opacity 1s ease;
 opacity:1;
 }
 
-/* Replay button */
 #replayBtn{
 position:absolute;
 bottom:15px;
@@ -125,6 +130,7 @@ canvas{
 position:fixed;
 pointer-events:none;
 }
+
 </style>
 </head>
 <body>
@@ -133,20 +139,17 @@ pointer-events:none;
 <source src="your-music.mp3" type="audio/mpeg">
 </audio>
 
-<!-- INTRO -->
 <section id="intro">
 <h1>Before I say Happy Birthday, Deha…</h1>
 <p>I need you to know something from my heart.</p>
 <button id="startBtn">Open My Heart 💌</button>
 </section>
 
-<!-- COUNTDOWN -->
 <section id="countSection" class="hidden">
 <h1>Counting the seconds until my queen’s day 👑</h1>
 <div id="countdown"></div>
 </section>
 
-<!-- MAIN -->
 <section id="main" class="hidden">
 <h1>Happy Birthday, Deha ❤️</h1>
 <p>
@@ -157,7 +160,6 @@ and a year deeper in my heart.
 </p>
 </section>
 
-<!-- SLIDESHOW -->
 <section id="memories" class="hidden">
 <h1>Our Beautiful Memories 📸</h1>
 <div class="slideshow">
@@ -173,12 +175,10 @@ and a year deeper in my heart.
 <img src="img10.jpeg">
 <img src="img11.jpeg">
 <img src="img12.jpeg">
-
 <button id="replayBtn">Replay 💕</button>
 </div>
 </section>
 
-<!-- REASONS -->
 <section id="reasons" class="hidden">
 <h1>Why I Love You, Deha 💖</h1>
 <button onclick="show('r1')">Your Smile</button>
@@ -190,7 +190,6 @@ and a year deeper in my heart.
 <p id="r3" class="hidden fade">Your voice is my favorite sound in this entire world.</p>
 </section>
 
-<!-- LETTER -->
 <section id="letter" class="hidden">
 <h1>A Letter To You 💌</h1>
 <p id="typewriter"></p>
@@ -211,36 +210,40 @@ document.getElementById("countSection").classList.remove("hidden");
 
 startCountdown();
 createHearts();
-
 });
 
 function startCountdown(){
 
-let countDate = new Date("February 26, 2026 00:00:00").getTime();
+let countDate = new Date().getTime() - 1000; // instant for testing
 
-let x=setInterval(function(){
-let now=new Date().getTime();
-let distance=countDate-now;
+let x = setInterval(function(){
 
-let days=Math.floor(distance/(1000*60*60*24));
-let hours=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
-let minutes=Math.floor((distance%(1000*60*60))/(1000*60));
-let seconds=Math.floor((distance%(1000*60))/1000);
+let now = new Date().getTime();
+let distance = countDate - now;
 
-document.getElementById("countdown").innerHTML=
-days+"d "+hours+"h "+minutes+"m "+seconds+"s ";
-
-if(distance<0){
+if(distance <= 0){
 clearInterval(x);
+
 document.getElementById("countSection").classList.add("hidden");
 document.getElementById("main").classList.remove("hidden");
 document.getElementById("memories").classList.remove("hidden");
 document.getElementById("reasons").classList.remove("hidden");
 document.getElementById("letter").classList.remove("hidden");
+
 startSlideshow();
 typeWriter();
 confettiEffect();
+
+/* AUTO SCROLL */
+
+setTimeout(()=>{document.getElementById("main").scrollIntoView({behavior:"smooth"});},500);
+setTimeout(()=>{document.getElementById("memories").scrollIntoView({behavior:"smooth"});},4000);
+setTimeout(()=>{document.getElementById("reasons").scrollIntoView({behavior:"smooth"});},9000);
+setTimeout(()=>{document.getElementById("letter").scrollIntoView({behavior:"smooth"});},14000);
+
+return;
 }
+
 },1000);
 }
 
@@ -349,4 +352,3 @@ setInterval(draw,20);
 
 </body>
 </html>
-
