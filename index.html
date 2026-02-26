@@ -8,27 +8,41 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
 
 <style>
+
 body{
 margin:0;
 font-family:'Poppins',sans-serif;
 background:linear-gradient(to bottom,#0f0c29,#302b63,#24243e);
 color:white;
 text-align:center;
-overflow-x:hidden;
+overflow:hidden; /* no scrolling */
 }
 
+/* ALL SECTIONS FULL SCREEN */
 section{
-min-height:100vh;
+position:absolute;
+width:100%;
+height:100vh;
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
-padding:40px 20px;
+padding:30px;
+top:0;
+left:0;
+opacity:0;
+pointer-events:none;
+transition:opacity 0.8s ease;
+}
+
+section.active{
+opacity:1;
+pointer-events:auto;
 }
 
 h1{
 font-family:'Dancing Script',cursive;
-font-size:3rem;
+font-size:2.8rem;
 margin-bottom:20px;
 }
 
@@ -40,8 +54,8 @@ background:#ff4e8b;
 color:white;
 font-size:1rem;
 cursor:pointer;
+margin-top:20px;
 transition:0.3s;
-margin:15px;
 }
 
 button:hover{
@@ -49,94 +63,75 @@ background:#ff1e6b;
 transform:scale(1.1);
 }
 
-.hidden{display:none;}
-
+/* SLIDESHOW FRAME */
 .slideshow{
-position:relative;
 width:90%;
-max-width:400px;
+max-width:380px;
 height:500px;
-border-radius:20px;
 overflow:hidden;
+border-radius:20px;
 box-shadow:0 0 25px rgba(255,255,255,0.4);
+position:relative;
 }
 
-.slideshow img{
-width:100%;
+/* SLIDE TRACK */
+.slide-track{
+display:flex;
+height:100%;
+transition:transform 0.8s ease-in-out;
+}
+
+.slide-track img{
+min-width:100%;
 height:100%;
 object-fit:contain;
-background:#000;
-position:absolute;
-opacity:0;
-transition:opacity 1s ease;
+background:black;
 }
 
-.slideshow img.active{
-opacity:1;
-}
-
+/* Replay Button */
 #replayBtn{
 position:absolute;
 bottom:15px;
 left:50%;
 transform:translateX(-50%);
-padding:8px 20px;
-border:none;
-border-radius:20px;
-background:#ff4e8b;
-color:white;
-font-size:0.9rem;
-cursor:pointer;
 display:none;
 }
 
 canvas{
-position:fixed;
+position:absolute;
+top:0;
+left:0;
 pointer-events:none;
 }
 
-#countdown{
-font-size:2rem;
-margin-top:20px;
-}
 </style>
 </head>
 <body>
 
-<audio id="music" loop preload="auto">
+<audio id="music" loop>
 <source src="your-music.mp3" type="audio/mpeg">
 </audio>
 
 <!-- INTRO -->
-<section id="intro">
+<section id="intro" class="active">
 <h1>Before I say Happy Birthday, Deha…</h1>
-<p>I need you to know something from my heart.</p>
-<button id="startBtn">Open My Heart 💌</button>
+<button onclick="startExperience()">Open My Heart 💌</button>
 </section>
 
-<!-- COUNTDOWN -->
-<section id="countSection" class="hidden">
-<h1>Counting the seconds until my queen’s day 👑</h1>
-<div id="countdown"></div>
-</section>
-
-<!-- MAIN MESSAGE -->
-<section id="main" class="hidden">
+<!-- MAIN -->
+<section id="main">
 <h1>Happy Birthday, Deha ❤️</h1>
-<p>
-You are not just a year older today…<br>
-You are a year more beautiful,<br>
-a year more precious,<br>
-and a year deeper in my heart.
-</p>
-<button onclick="goToMemories()">Next 💕</button>
+<p>You are my peace, my happiness, my forever.</p>
+<button onclick="showSection('memories')">Next 💕</button>
 </section>
 
 <!-- SLIDESHOW -->
-<section id="memories" class="hidden">
+<section id="memories">
 <h1>Our Beautiful Memories 📸</h1>
+
 <div class="slideshow">
-<img src="img1.jpeg" class="active">
+<div class="slide-track" id="slideTrack">
+<img src="img1.jpeg">
 <img src="img2.jpeg">
 <img src="img3.jpeg">
 <img src="img4.jpeg">
@@ -148,23 +143,16 @@ and a year deeper in my heart.
 <img src="img10.jpeg">
 <img src="img11.jpeg">
 <img src="img12.jpeg">
-<button id="replayBtn">Replay 💕</button>
 </div>
-<button onclick="goToReasons()">Next 💕</button>
-</section>
+<button id="replayBtn" onclick="startSlideshow()">Replay 💕</button>
+</div>
 
-<!-- REASONS -->
-<section id="reasons" class="hidden">
-<h1>Why I Love You, Deha 💖</h1>
-<p>Your smile heals my worst days.</p>
-<p>Your heart is the safest place I know.</p>
-<p>Your voice is my favorite sound.</p>
-<button onclick="goToLetter()">Final Message 💌</button>
+<button onclick="showSection('letter')">Next 💌</button>
 </section>
 
 <!-- LETTER -->
-<section id="letter" class="hidden">
-<h1>A Letter To You 💌</h1>
+<section id="letter">
+<h1>A Letter To You 💖</h1>
 <p id="typewriter"></p>
 </section>
 
@@ -172,103 +160,75 @@ and a year deeper in my heart.
 
 <script>
 
-document.getElementById("startBtn").addEventListener("click", function () {
+/* SECTION CONTROL */
 
-const music = document.getElementById("music");
-music.volume = 0.7;
-music.play();
-
-document.getElementById("intro").classList.add("hidden");
-document.getElementById("countSection").classList.remove("hidden");
-
-startCountdown();
+function showSection(id){
+document.querySelectorAll("section").forEach(sec=>{
+sec.classList.remove("active");
 });
+document.getElementById(id).classList.add("active");
 
-function startCountdown(){
-
-let countDate = new Date().getTime() - 1000; // instant for testing
-
-let x = setInterval(function(){
-
-let now = new Date().getTime();
-let distance = countDate - now;
-
-if(distance <= 0){
-clearInterval(x);
-document.getElementById("countSection").classList.add("hidden");
-document.getElementById("main").classList.remove("hidden");
-return;
-}
-
-let seconds=Math.floor((distance%(1000*60))/1000);
-document.getElementById("countdown").innerHTML = seconds + "s ";
-
-},1000);
-}
-
-/* STEP FUNCTIONS */
-
-function goToMemories(){
-document.getElementById("main").classList.add("hidden");
-document.getElementById("memories").classList.remove("hidden");
+if(id === "memories"){
 startSlideshow();
 }
 
-function goToReasons(){
-document.getElementById("memories").classList.add("hidden");
-document.getElementById("reasons").classList.remove("hidden");
-}
-
-function goToLetter(){
-document.getElementById("reasons").classList.add("hidden");
-document.getElementById("letter").classList.remove("hidden");
+if(id === "letter"){
 typeWriter();
 confettiEffect();
 }
+}
 
-/* SLIDESHOW */
+function startExperience(){
+document.getElementById("music").play();
+showSection("main");
+}
+
+/* SLIDESHOW LEFT TO RIGHT */
+
+let currentIndex = 0;
+let slideInterval;
 
 function startSlideshow(){
 
-let slides=document.querySelectorAll(".slideshow img");
-let replayBtn=document.getElementById("replayBtn");
+let track = document.getElementById("slideTrack");
+let slides = document.querySelectorAll(".slide-track img");
+let replayBtn = document.getElementById("replayBtn");
 
-let index=0;
-slides.forEach(s=>s.classList.remove("active"));
-slides[0].classList.add("active");
+currentIndex = 0;
+track.style.transform = "translateX(0)";
+replayBtn.style.display = "none";
 
-replayBtn.style.display="none";
+clearInterval(slideInterval);
 
-let slideInterval=setInterval(()=>{
+slideInterval = setInterval(()=>{
+currentIndex++;
 
-slides[index].classList.remove("active");
-index++;
-
-if(index < slides.length){
-slides[index].classList.add("active");
+if(currentIndex < slides.length){
+track.style.transform = "translateX(-" + currentIndex*100 + "%)";
 }else{
 clearInterval(slideInterval);
-replayBtn.style.display="block";
+replayBtn.style.display = "block";
 }
 
 },2500);
-
-replayBtn.onclick=function(){
-startSlideshow();
-};
 }
 
 /* TYPEWRITER */
 
-let text="Deha, you are my peace, my happiness, my forever. I promise to love you more every single day. Happy Birthday my everything. ❤️ – Arnab";
+let text="Deha, I promise to love you more every single day. You are my forever. ❤️ – Arnab";
 let i=0;
 
 function typeWriter(){
+i=0;
+document.getElementById("typewriter").innerHTML="";
+let typing=setInterval(()=>{
 if(i<text.length){
 document.getElementById("typewriter").innerHTML+=text.charAt(i);
 i++;
-setTimeout(typeWriter,40);
+}else{
+clearInterval(typing);
 }
+},40);
 }
 
 /* CONFETTI */
@@ -288,10 +248,10 @@ r:Math.random()*6+2
 });
 }
 
-function draw(){
+setInterval(()=>{
 ctx.clearRect(0,0,canvas.width,canvas.height);
 ctx.fillStyle="white";
-for(let p of pieces){
+pieces.forEach(p=>{
 ctx.beginPath();
 ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
 ctx.fill();
@@ -300,10 +260,8 @@ if(p.y>canvas.height){
 p.y=0;
 p.x=Math.random()*canvas.width;
 }
-}
-}
-
-setInterval(draw,20);
+});
+},20);
 }
 
 </script>
