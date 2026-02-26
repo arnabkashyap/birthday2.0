@@ -1,24 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Happy Birthday Deha ❤️</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-
 <style>
-
 body{
 margin:0;
-font-family:'Poppins',sans-serif;
-background:linear-gradient(to bottom,#0f0c29,#302b63,#24243e);
+font-family:Arial;
+background:#1e1e2f;
 color:white;
+overflow:hidden;
 text-align:center;
-overflow:hidden; /* no scrolling */
 }
 
-/* ALL SECTIONS FULL SCREEN */
 section{
 position:absolute;
 width:100%;
@@ -27,110 +23,67 @@ display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
-padding:30px;
 top:0;
 left:0;
 opacity:0;
-pointer-events:none;
-transition:opacity 0.8s ease;
+transition:0.6s;
 }
 
 section.active{
 opacity:1;
-pointer-events:auto;
-}
-
-h1{
-font-family:'Dancing Script',cursive;
-font-size:2.8rem;
-margin-bottom:20px;
 }
 
 button{
-padding:12px 25px;
+padding:10px 20px;
+margin-top:20px;
 border:none;
-border-radius:30px;
+border-radius:20px;
 background:#ff4e8b;
 color:white;
-font-size:1rem;
+font-size:16px;
 cursor:pointer;
-margin-top:20px;
-transition:0.3s;
 }
 
-button:hover{
-background:#ff1e6b;
-transform:scale(1.1);
-}
-
-/* SLIDESHOW FRAME */
 .slideshow{
-width:90%;
-max-width:380px;
-height:500px;
+width:300px;
+height:400px;
 overflow:hidden;
-border-radius:20px;
-box-shadow:0 0 25px rgba(255,255,255,0.4);
 position:relative;
 }
 
-/* SLIDE TRACK */
 .slide-track{
 display:flex;
+width:1200%;
 height:100%;
-transition:transform 0.8s ease-in-out;
+transition:transform 0.8s ease;
 }
 
 .slide-track img{
-min-width:100%;
+width:100%;
 height:100%;
 object-fit:contain;
 background:black;
-}
-
-/* Replay Button */
-#replayBtn{
-position:absolute;
-bottom:15px;
-left:50%;
-transform:translateX(-50%);
-display:none;
-}
-
-canvas{
-position:absolute;
-top:0;
-left:0;
-pointer-events:none;
 }
 
 </style>
 </head>
 <body>
 
-<audio id="music" loop>
-<source src="your-music.mp3" type="audio/mpeg">
-</audio>
-
-<!-- INTRO -->
 <section id="intro" class="active">
-<h1>Before I say Happy Birthday, Deha…</h1>
-<button onclick="startExperience()">Open My Heart 💌</button>
+<h1>Happy Birthday Deha ❤️</h1>
+<button onclick="next('main')">Start</button>
 </section>
 
-<!-- MAIN -->
 <section id="main">
-<h1>Happy Birthday, Deha ❤️</h1>
-<p>You are my peace, my happiness, my forever.</p>
-<button onclick="showSection('memories')">Next 💕</button>
+<h1>You Are My Everything 💖</h1>
+<button onclick="next('memories')">Next</button>
 </section>
 
-<!-- SLIDESHOW -->
 <section id="memories">
-<h1>Our Beautiful Memories 📸</h1>
+<h1>Our Memories 📸</h1>
 
 <div class="slideshow">
-<div class="slide-track" id="slideTrack">
+<div class="slide-track" id="track">
 <img src="img1.jpeg">
 <img src="img2.jpeg">
 <img src="img3.jpeg">
@@ -144,126 +97,64 @@ pointer-events:none;
 <img src="img11.jpeg">
 <img src="img12.jpeg">
 </div>
-<button id="replayBtn" onclick="startSlideshow()">Replay 💕</button>
 </div>
 
-<button onclick="showSection('letter')">Next 💌</button>
+<button onclick="next('letter')">Next</button>
 </section>
 
-<!-- LETTER -->
 <section id="letter">
-<h1>A Letter To You 💖</h1>
-<p id="typewriter"></p>
+<h1>I Love You Forever ❤️</h1>
+<p id="text"></p>
 </section>
-
-<canvas id="confetti"></canvas>
 
 <script>
 
-/* SECTION CONTROL */
-
-function showSection(id){
-document.querySelectorAll("section").forEach(sec=>{
-sec.classList.remove("active");
-});
+function next(id){
+document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 
-if(id === "memories"){
-startSlideshow();
+if(id==="memories"){
+startSlide();
 }
 
-if(id === "letter"){
-typeWriter();
-confettiEffect();
+if(id==="letter"){
+type();
 }
 }
 
-function startExperience(){
-document.getElementById("music").play();
-showSection("main");
-}
+let index=0;
+function startSlide(){
+let track=document.getElementById("track");
+let total=12;
+index=0;
+track.style.transform="translateX(0)";
 
-/* SLIDESHOW LEFT TO RIGHT */
-
-let currentIndex = 0;
-let slideInterval;
-
-function startSlideshow(){
-
-let track = document.getElementById("slideTrack");
-let slides = document.querySelectorAll(".slide-track img");
-let replayBtn = document.getElementById("replayBtn");
-
-currentIndex = 0;
-track.style.transform = "translateX(0)";
-replayBtn.style.display = "none";
-
-clearInterval(slideInterval);
-
-slideInterval = setInterval(()=>{
-currentIndex++;
-
-if(currentIndex < slides.length){
-track.style.transform = "translateX(-" + currentIndex*100 + "%)";
+let slide=setInterval(()=>{
+index++;
+if(index<total){
+track.style.transform="translateX(-"+(index*100)+"%)";
 }else{
-clearInterval(slideInterval);
-replayBtn.style.display = "block";
+clearInterval(slide);
+}
+},2000);
 }
 
-},2500);
-}
-
-/* TYPEWRITER */
-
-let text="Deha, I promise to love you more every single day. You are my forever. ❤️ – Arnab";
+function type(){
+let text="Deha, I promise to love you forever. ❤️ - Arnab";
 let i=0;
-
-function typeWriter(){
-i=0;
-document.getElementById("typewriter").innerHTML="";
-let typing=setInterval(()=>{
+let area=document.getElementById("text");
+area.innerHTML="";
+let t=setInterval(()=>{
 if(i<text.length){
-document.getElementById("typewriter").innerHTML+=text.charAt(i);
+area.innerHTML+=text[i];
 i++;
 }else{
-clearInterval(typing);
+clearInterval(t);
 }
 },40);
 }
 
-/* CONFETTI */
-
-function confettiEffect(){
-const canvas=document.getElementById("confetti");
-const ctx=canvas.getContext("2d");
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
-let pieces=[];
-for(let i=0;i<120;i++){
-pieces.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-r:Math.random()*6+2
-});
-}
-
-setInterval(()=>{
-ctx.clearRect(0,0,canvas.width,canvas.height);
-ctx.fillStyle="white";
-pieces.forEach(p=>{
-ctx.beginPath();
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-ctx.fill();
-p.y+=2;
-if(p.y>canvas.height){
-p.y=0;
-p.x=Math.random()*canvas.width;
-}
-});
-},20);
-}
-
 </script>
+
 </body>
 </html>
