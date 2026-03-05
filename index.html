@@ -11,13 +11,33 @@
         rel="stylesheet">
 
     <style>
+        :root {
+            --primary-color: #ff4e8b;
+            --secondary-color: #ff1e6b;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-color: #ffffff;
+        }
+
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
-            color: white;
+            background: radial-gradient(circle at 50% 50%, #1b2735 0%, #090a0f 100%);
+            color: var(--text-color);
             text-align: center;
             overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Starry Background */
+        #stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: transparent;
         }
 
         section {
@@ -27,43 +47,107 @@
             justify-content: center;
             align-items: center;
             padding: 40px 20px;
+            box-sizing: border-box;
+            perspective: 1000px;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            max-width: 600px;
+            width: 90%;
+            margin: 20px auto;
+            animation: cardFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes cardFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
         h1 {
             font-family: 'Dancing Script', cursive;
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 78, 139, 0.5);
+            background: linear-gradient(45deg, #ff4e8b, #ff9a9e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
         }
 
         button {
-            padding: 12px 25px;
+            padding: 15px 35px;
             border: none;
-            border-radius: 30px;
-            background: #ff4e8b;
+            border-radius: 50px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             color: white;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             margin: 10px;
+            box-shadow: 0 4px 15px rgba(255, 78, 139, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
         }
 
         button:hover {
-            background: #ff1e6b;
-            transform: scale(1.1);
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 78, 139, 0.6);
+        }
+
+        button:active {
+            transform: scale(0.98);
         }
 
         .hidden {
             display: none;
-        }
-
-        .fade {
-            animation: fadeIn 2s ease forwards;
             opacity: 0;
+            transform: translateY(20px);
         }
 
-        @keyframes fadeIn {
+        .fade-in {
+            animation: fadeInFull 1.5s ease forwards;
+        }
+
+        @keyframes fadeInFull {
             to {
                 opacity: 1;
+                transform: translateY(0);
             }
         }
 
@@ -71,36 +155,46 @@
             position: fixed;
             top: -10px;
             animation: fall linear infinite;
-            font-size: 20px;
+            pointer-events: none;
+            z-index: 10;
         }
 
         @keyframes fall {
-            to {
-                transform: translateY(110vh);
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
             }
         }
 
-        .slideshow {
+        .slideshow-container {
             position: relative;
             width: 90%;
-            max-width: 400px;
-            height: 500px;
-            border-radius: 20px;
+            max-width: 450px;
+            height: 550px;
+            border-radius: 30px;
             overflow: hidden;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
+            border: 4px solid var(--glass-border);
         }
 
         .slideshow img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
             position: absolute;
             left: 100%;
-            transition: left 1s ease-in-out;
+            transition: all 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+            filter: brightness(0.9);
         }
 
         .slideshow img.active {
             left: 0;
+            filter: brightness(1.1);
         }
 
         .slideshow img.last {
@@ -108,18 +202,66 @@
         }
 
         #countdown {
-            font-size: 2rem;
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: 2px;
             margin-top: 20px;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #fff, #ff4e8b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        canvas {
+        .countdown-item {
+            display: inline-block;
+            margin: 0 15px;
+        }
+
+        .countdown-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            display: block;
+            margin-top: -5px;
+            color: rgba(255, 255, 255, 0.6);
+            -webkit-text-fill-color: initial;
+        }
+
+        canvas#confetti {
             position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
+            z-index: 100;
+        }
+
+        #typewriter {
+            font-size: 1.2rem;
+            font-style: italic;
+            min-height: 150px;
+        }
+
+        .floating-balloon {
+            position: fixed;
+            bottom: -100px;
+            z-index: 1;
+            pointer-events: none;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            to {
+                transform: translateY(-120vh);
+            }
         }
     </style>
 </head>
 
 <body>
+
+    <canvas id="stars"></canvas>
 
     <audio id="music" loop preload="auto">
         <source src="your-music.mp3" type="audio/mpeg">
@@ -127,92 +269,123 @@
 
     <!-- INTRO -->
     <section id="intro">
-        <h1>Before I say Happy Birthday, Deha…</h1>
-        <p>I need you to know something from my heart.</p>
-        <button id="startBtn">Open My Heart 💌</button>
+        <div class="glass-card fade-in">
+            <h1>Before I say Happy Birthday, Deha…</h1>
+            <p>I want to take you on a little journey of how much you mean to me.</p>
+            <button id="startBtn">Unlock My Heart �</button>
+        </div>
     </section>
 
     <!-- COUNTDOWN -->
     <section id="countSection" class="hidden">
-        <h1>Counting the seconds until my queen’s day 👑</h1>
-        <div id="countdown"></div>
+        <div class="glass-card">
+            <h1>The Grand Celebration Begins In...</h1>
+            <div id="countdown"></div>
+        </div>
     </section>
 
     <!-- MAIN -->
     <section id="main" class="hidden">
-        <h1>Happy Birthday, Deha ❤️</h1>
-        <p>
-            You are not just a year older today…<br>
-            You are a year more beautiful,<br>
-            a year more precious,<br>
-            and a year deeper in my heart.
-        </p>
+        <div class="glass-card">
+            <h1>Happy Birthday, Deha ❤️</h1>
+            <p>
+                To the girl who makes my world spin.<br>
+                You are not just a year older today…<br>
+                You are an upgrade to perfection.
+            </p>
+        </div>
     </section>
 
     <!-- SLIDESHOW -->
     <section id="memories" class="hidden">
-        <h1>Our Beautiful Memories 📸</h1>
-        <div class="slideshow">
-            <img src="img1.jpeg" class="active">
-            <img src="img2.jpeg">
-            <img src="img3.jpeg">
-            <img src="img4.jpeg">
-            <img src="img5.jpeg">
-            <img src="img6.jpeg">
-            <img src="img7.jpeg">
-            <img src="img8.jpeg">
-            <img src="img9.jpeg">
-            <img src="img10.jpeg">
-            <img src="img11.jpeg">
-            <img src="img12.jpeg">
+        <div class="glass-card">
+            <h1>Our Journey Together 📸</h1>
+            <div class="slideshow-container">
+                <div class="slideshow">
+                    <img src="img1.jpeg" class="active">
+                    <img src="img2.jpeg">
+                    <img src="img3.jpeg">
+                    <img src="img4.jpeg">
+                    <img src="img5.jpeg">
+                    <img src="img6.jpeg">
+                    <img src="img7.jpeg">
+                    <img src="img8.jpeg">
+                    <img src="img9.jpeg">
+                    <img src="img10.jpeg">
+                    <img src="img11.jpeg">
+                    <img src="img12.jpeg">
+                </div>
+            </div>
+            <p style="margin-top: 20px; font-style: italic;">Every moment with you is a treasure...</p>
         </div>
     </section>
 
     <!-- REASONS -->
     <section id="reasons" class="hidden">
-        <h1>Why I Love You, Deha 💖</h1>
-        <button onclick="show('r1')">Your Smile</button>
-        <button onclick="show('r2')">Your Heart</button>
-        <button onclick="show('r3')">Your Voice</button>
+        <div class="glass-card">
+            <h1>What Makes You Special? 💖</h1>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center;">
+                <button onclick="showReason('r1')">Your Smile</button>
+                <button onclick="showReason('r2')">Your Heart</button>
+                <button onclick="showReason('r3')">Your Voice</button>
+                <button onclick="showReason('r4')">Your Soul</button>
+            </div>
 
-        <p id="r1" class="hidden fade">Your smile heals my worst days and lights up my darkest nights.</p>
-        <p id="r2" class="hidden fade">Your heart is the safest place I have ever known.</p>
-        <p id="r3" class="hidden fade">Your voice is my favorite sound in this entire world.</p>
+            <div style="margin-top: 30px; height: 60px;">
+                <p id="r1" class="hidden" style="color: #ff9a9e; font-weight: bold;">Your smile is the sunrise that
+                    brightens my every day.</p>
+                <p id="r2" class="hidden" style="color: #ff9a9e; font-weight: bold;">Your heart is the kindest, warmest
+                    place I've ever known.</p>
+                <p id="r3" class="hidden" style="color: #ff9a9e; font-weight: bold;">Your voice is the melody that calms
+                    my wildest storms.</p>
+                <p id="r4" class="hidden" style="color: #ff9a9e; font-weight: bold;">Your soul is simply beautiful,
+                    inside and out.</p>
+            </div>
+        </div>
     </section>
 
     <!-- LETTER -->
     <section id="letter" class="hidden">
-        <h1>A Letter To You 💌</h1>
-        <p id="typewriter"></p>
+        <div class="glass-card">
+            <h1>A Special Note 💌</h1>
+            <div id="typewriter"></div>
+            <button id="giftBtn" class="hidden" style="margin-top: 30px;">A Final Surprise... 🎁</button>
+        </div>
     </section>
 
     <canvas id="confetti"></canvas>
 
     <script>
-        console.log("Birthday Site Script Loaded ✅");
+        console.log("Birthday Site v2.0 Started 🚀");
 
         document.getElementById("startBtn").addEventListener("click", function () {
-            console.log("Start Button Clicked!");
             const music = document.getElementById("music");
-            music.volume = 0.7;
+            music.volume = 0.5;
 
             try {
-                music.play().catch(e => console.log("Music play blocked or failed:", e));
-            } catch (err) {
-                console.log("Music play error:", err);
-            }
+                music.play().catch(e => console.log("Music play blocked:", e));
+            } catch (err) { }
 
-            document.getElementById("intro").classList.add("hidden");
-            document.getElementById("countSection").classList.remove("hidden");
+            const intro = document.getElementById("intro");
+            intro.style.transition = "opacity 1s ease";
+            intro.style.opacity = "0";
 
-            startCountdown();
+            setTimeout(() => {
+                intro.classList.add("hidden");
+                const countSection = document.getElementById("countSection");
+                countSection.classList.remove("hidden");
+                countSection.classList.add("fade-in");
+                startCountdown();
+            }, 1000);
+
+            createStars();
             createHearts();
-
+            createBalloons();
         });
 
         function startCountdown() {
-
-            let countDate = new Date("February 26, 2026 00:00:00").getTime();
+            // Target date: Feb 27, 2026.
+            let countDate = new Date("February 27, 2026 00:00:00").getTime();
 
             let x = setInterval(function () {
                 let now = new Date().getTime();
@@ -223,42 +396,119 @@
                 let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 let seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                document.getElementById("countdown").innerHTML =
-                    days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+                document.getElementById("countdown").innerHTML = `
+                    <div class="countdown-item">${days}<span class="countdown-label">Days</span></div>
+                    <div class="countdown-item">${hours}<span class="countdown-label">Hours</span></div>
+                    <div class="countdown-item">${minutes}<span class="countdown-label">Mins</span></div>
+                    <div class="countdown-item">${seconds}<span class="countdown-label">Secs</span></div>
+                `;
 
                 if (distance < 0) {
                     clearInterval(x);
-                    document.getElementById("countSection").classList.add("hidden");
-                    document.getElementById("main").classList.remove("hidden");
-                    document.getElementById("memories").classList.remove("hidden");
-                    document.getElementById("reasons").classList.remove("hidden");
-                    document.getElementById("letter").classList.remove("hidden");
-                    startSlideshow();
-                    typeWriter();
-                    confettiEffect();
+                    showMainCelebration();
                 }
             }, 1000);
         }
 
-        function show(id) {
-            document.getElementById(id).classList.toggle("hidden");
+        function showMainCelebration() {
+            document.getElementById("countSection").classList.add("hidden");
+
+            const sections = ["main", "memories", "reasons", "letter"];
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                el.classList.remove("hidden");
+                el.classList.add("fade-in");
+            });
+
+            startSlideshow();
+            typeWriter();
+            startConfetti();
+        }
+
+        function showReason(id) {
+            const reasons = ['r1', 'r2', 'r3', 'r4'];
+            reasons.forEach(r => {
+                const el = document.getElementById(r);
+                if (r === id) {
+                    el.classList.remove("hidden");
+                    el.classList.add("fade-in");
+                    el.style.display = "block";
+                } else {
+                    el.classList.add("hidden");
+                    el.style.display = "none";
+                }
+            });
+        }
+
+        function createStars() {
+            const canvas = document.getElementById("stars");
+            const ctx = canvas.getContext("2d");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const stars = [];
+            for (let i = 0; i < 200; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2,
+                    speed: Math.random() * 0.5
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "white";
+                stars.forEach(s => {
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    s.y += s.speed;
+                    if (s.y > canvas.height) s.y = 0;
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
         }
 
         function createHearts() {
+            const hearts = ["❤️", "💖", "✨", "🌸", "💕"];
             setInterval(() => {
                 let heart = document.createElement("div");
                 heart.classList.add("heart");
-                heart.innerHTML = "❤️";
+                heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
                 heart.style.left = Math.random() * 100 + "vw";
-                heart.style.animationDuration = Math.random() * 3 + 2 + "s";
+                heart.style.fontSize = (Math.random() * 20 + 10) + "px";
+                heart.style.animationDuration = (Math.random() * 3 + 4) + "s";
+                heart.style.opacity = Math.random();
                 document.body.appendChild(heart);
-                setTimeout(() => heart.remove(), 5000);
-            }, 300);
+                setTimeout(() => heart.remove(), 6000);
+            }, 400);
+        }
+
+        function createBalloons() {
+            const colors = ['#ff4e8b', '#ff9a9e', '#fad0c4', '#ff1e6b', '#ffd1ff'];
+            setInterval(() => {
+                const b = document.createElement("div");
+                b.className = "floating-balloon";
+                b.style.left = Math.random() * 100 + "vw";
+                b.style.width = "30px";
+                b.style.height = "40px";
+                b.style.background = colors[Math.floor(Math.random() * colors.length)];
+                b.style.borderRadius = "50% 50% 50% 50% / 40% 40% 60% 60%";
+                b.style.opacity = "0.6";
+                b.style.boxShadow = "inset -5px -5px 10px rgba(0,0,0,0.2)";
+                b.style.animationDuration = (Math.random() * 5 + 10) + "s";
+                document.body.appendChild(b);
+                setTimeout(() => b.remove(), 15000);
+            }, 2000);
         }
 
         function startSlideshow() {
             let slides = document.querySelectorAll(".slideshow img");
             let index = 0;
+            if (slides.length === 0) return;
+
             setInterval(() => {
                 slides[index].classList.remove("active");
                 slides[index].classList.add("last");
@@ -269,71 +519,74 @@
                 slides[index].classList.remove("last");
                 slides[index].classList.add("active");
 
-                // Reset the previous slide position after transition
                 setTimeout(() => {
                     slides[prevIndex].classList.remove("last");
-                }, 1000);
-            }, 3000);
+                }, 1200);
+            }, 4000);
         }
 
         let text = "Deha, on your birthday I just want to say... You are my peace, my happiness, my safe place, and my forever. Every day with you feels like a blessing I never want to lose. I promise to love you more with every heartbeat, to stand by you in every storm, and to choose you again and again. Happy Birthday, my everything. ❤️ – Arnab";
-
-        let i = 0;
-
+        let textIdx = 0;
         function typeWriter() {
-            if (i < text.length) {
-                document.getElementById("typewriter").innerHTML += text.charAt(i);
-                i++;
-                setTimeout(typeWriter, 40);
+            if (textIdx < text.length) {
+                document.getElementById("typewriter").innerHTML += text.charAt(textIdx);
+                textIdx++;
+                setTimeout(typeWriter, 50);
+            } else {
+                document.getElementById("giftBtn").classList.remove("hidden");
+                document.getElementById("giftBtn").classList.add("fade-in");
             }
         }
 
-        function confettiEffect() {
+        function startConfetti() {
             const canvas = document.getElementById("confetti");
             const ctx = canvas.getContext("2d");
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
+            const colors = ['#ff4e8b', '#ff1e6b', '#ffffff', '#ff9a9e', '#fad0c4', '#ffd1ff'];
             let pieces = [];
             for (let i = 0; i < 150; i++) {
                 pieces.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    r: Math.random() * 6 + 2,
-                    d: Math.random() * canvas.height
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    speedX: Math.random() * 2 - 1,
+                    speedY: Math.random() * 3 + 2
                 });
             }
 
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = "white";
-                ctx.beginPath();
-                for (let i = 0; i < pieces.length; i++) {
-                    let p = pieces[i];
-                    ctx.moveTo(p.x, p.y);
-                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2, true);
-                }
-                ctx.fill();
-                update();
-            }
+                pieces.forEach(p => {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
 
-            function update() {
-                for (let i = 0; i < pieces.length; i++) {
-                    let p = pieces[i];
-                    p.y += Math.cos(p.d) + 1;
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+                    p.rotation += 2;
+
                     if (p.y > canvas.height) {
-                        p.y = 0;
+                        p.y = -20;
                         p.x = Math.random() * canvas.width;
                     }
-                }
+                });
+                requestAnimationFrame(draw);
             }
-
-            setInterval(draw, 20);
+            draw();
         }
 
-    </script>
+        document.getElementById("giftBtn").addEventListener("click", function () {
+            alert("Happy Birthday Deha! You are the best gift anyone could ever ask for! ❤️");
+        });
 
+    </script>
 </body>
 
 </html>
-
